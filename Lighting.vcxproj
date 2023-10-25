@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>F:\academic\4-2\opengl\include;$(IncludePath)</IncludePath>
-    <LibraryPath>F:\academic\4-2\opengl\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>G:\4.2\opengl\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>G:\4.2\opengl\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -132,7 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\opengl\glad.c" />
+    <ClCompile Include="..\..\opengl\glad.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

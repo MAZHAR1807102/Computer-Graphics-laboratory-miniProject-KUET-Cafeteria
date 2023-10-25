@@ -27,6 +27,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 void drawCube(unsigned int& cubeVAO, Shader& lightingShader, glm::mat4 model, float r, float g, float b);
 void bed(unsigned int& cubeVAO, Shader& lightingShader, glm::mat4 alTogether);
+void Room1(unsigned int& cubeVAO, Shader& lightingShader, glm::mat4 alTogether);
+void table(unsigned int& cubeVAO, Shader& lightingShader, glm::mat4 alTogether);
 
 
 // settings
@@ -61,10 +63,10 @@ BasicCamera basic_camera(eyeX, eyeY, eyeZ, lookAtX, lookAtY, lookAtZ, V);
 
 // positions of the point lights
 glm::vec3 pointLightPositions[] = {
-    glm::vec3(1.50f,  1.50f,  0.0f),
-    glm::vec3(1.5f,  -1.5f,  0.0f),
-    glm::vec3(-1.5f,  1.5f,  0.0f),
-    glm::vec3(-1.5f,  -1.5f,  0.0f)
+    glm::vec3(10.0f,  5.0f,  -9.50f),
+    glm::vec3(-4.50f,  5.0f,  -9.50f),
+    glm::vec3(-4.50f,  5.0f,  9.50f),
+    glm::vec3(10.0f,  5.0f, 9.50f)
 };
 
 
@@ -104,7 +106,7 @@ PointLight pointlight3(
     0.032f, //k_q
     3       // light number
 );
-PointLight pointlight4(
+ PointLight pointlight4(
 
     pointLightPositions[3].x, pointLightPositions[3].y, pointLightPositions[3].z,  // position
     0.05f, 0.05f, 0.05f,     // ambient
@@ -118,7 +120,9 @@ PointLight pointlight4(
 
 
 // light settings
-bool onOffToggle = true;
+bool onOffToggle = false;
+bool onOffToggle1 = false;
+bool donOffToggle = false;
 bool ambientToggle = true;
 bool diffuseToggle = true;
 bool specularToggle = true;
@@ -300,22 +304,22 @@ int main()
         // point light 2
         pointlight2.setUpPointLight(lightingShader);
         // point light 3
-        pointlight3.setUpPointLight(lightingShader);
-        // point light 4
-        pointlight4.setUpPointLight(lightingShader);
+       pointlight3.setUpPointLight(lightingShader);
+         //point light 4
+       pointlight4.setUpPointLight(lightingShader);
 
-        lightingShader.setVec3("diectionalLight.directiaon", 0.0f, 3.0f, 0.0f);
+        lightingShader.setVec3("diectionalLight.directiaon", 2.5f, 3.0f, -0.50f);
         lightingShader.setVec3("diectionalLight.ambient", .2, .2, .2);
-        lightingShader.setVec3("diectionalLight.diffuse", .8f, .8f, .8f);
+        lightingShader.setVec3("diectionalLight.diffuse", 1.0f, 1.0f, .8f);
         lightingShader.setVec3("diectionalLight.specular", 1.0f, 1.0f, 1.0f);
 
 
 
-
+       
         lightingShader.setBool("dlighton", true);
 
-
-        lightingShader.setVec3("spotlight.position", -0.5, 1, -0.5);
+       // donOffToggle = true;
+        lightingShader.setVec3("spotlight.position", 2.5, 3.0, -0.5);
         lightingShader.setVec3("spotlight.direction", 0, -1, 0);
         lightingShader.setVec3("spotlight.ambient", .2, .2, .2);
         lightingShader.setVec3("spotlight.diffuse", .8f, .8f, .8f);
@@ -324,7 +328,7 @@ int main()
         lightingShader.setFloat("spotlight.k_l", 0.09);
         lightingShader.setFloat("spotlight.k_q", 0.032);
         lightingShader.setFloat("cos_theta", glm::cos(glm::radians(5.5f)));
-        lightingShader.setBool("spotlighton", true);
+        lightingShader.setBool("spotlighton", donOffToggle);
 
 
         //pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z,  // position
@@ -365,8 +369,9 @@ int main()
         //glBindVertexArray(cubeVAO);
         //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
         //glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        bed(cubeVAO, lightingShader, model);
+        Room1(cubeVAO, lightingShader, model);
+        table(cubeVAO, lightingShader, model);
+        //bed(cubeVAO, lightingShader, model);
 
         // also draw the lamp object(s)
         ourShader.use();
@@ -375,7 +380,7 @@ int main()
 
         // we now draw as many light bulbs as we have point lights.
         glBindVertexArray(lightCubeVAO);
-        for (unsigned int i = 0; i < 4; i++)
+        for (unsigned int i = 0; i < 2; i++)
         {
             model = glm::mat4(1.0f);
             model = glm::translate(model, pointLightPositions[i]);
@@ -409,9 +414,9 @@ void drawCube(unsigned int& cubeVAO, Shader& lightingShader, glm::mat4 model = g
 {
     lightingShader.use();
 
-    lightingShader.setVec3("material.ambient", glm::vec3(r, 0.0, 0.0));
-    lightingShader.setVec3("material.diffuse", glm::vec3(r, 0.0, 0.0));
-    lightingShader.setVec3("material.specular", glm::vec3(1.0f, 0.0f, 0.0f));
+    lightingShader.setVec3("material.ambient", glm::vec3(0.0, g, 0.1));
+    lightingShader.setVec3("material.diffuse", glm::vec3(0.0, g, 0.1));
+    lightingShader.setVec3("material.specular", glm::vec3(1.0f, 1.0f, 1.0f));
     lightingShader.setFloat("material.shininess", 32.0f);
 
     lightingShader.setMat4("model", model);
@@ -420,6 +425,81 @@ void drawCube(unsigned int& cubeVAO, Shader& lightingShader, glm::mat4 model = g
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
 
+
+void drawCube1(unsigned int& cubeVAO, Shader& lightingShader, glm::mat4 model = glm::mat4(1.0f), float r = 1.0f, float g = 1.0f, float b = 1.0f)
+{
+    lightingShader.use();
+
+    lightingShader.setVec3("material.ambient", glm::vec3(0.3f, 0.0, 0.1));
+    lightingShader.setVec3("material.diffuse", glm::vec3(0.3f, 0.0, 0.1));
+    lightingShader.setVec3("material.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    lightingShader.setFloat("material.shininess", 32.0f);
+
+    lightingShader.setMat4("model", model);
+
+    glBindVertexArray(cubeVAO);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+}
+
+
+//Table_reception
+
+void table(unsigned int& cubeVAO, Shader& lightingShader, glm::mat4 alTogether)
+{
+    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 translate = glm::mat4(1.0f);
+    glm::mat4 translate2 = glm::mat4(1.0f);
+    glm::mat4 scale = glm::mat4(1.0f);
+    scale = glm::scale(model, glm::vec3(20.5f, 2.50f, 2.0f));
+    translate = glm::translate(model, glm::vec3(-10.5, 0, 5.5));
+    model = alTogether * scale * translate;
+    drawCube1(cubeVAO, lightingShader, model, 0.545, 0.271, 0.075);
+}
+
+void Room1(unsigned int& cubeVAO, Shader& lightingShader, glm::mat4 alTogether)
+{
+    //Left wall
+    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 translate = glm::mat4(1.0f);
+    glm::mat4 translate2 = glm::mat4(1.0f);
+    glm::mat4 scale = glm::mat4(1.0f);
+    scale = glm::scale(model, glm::vec3(0.5f, 5.0f, 20.0f));
+    translate = glm::translate(model, glm::vec3(-10.5, 0, -0.5));
+    model = alTogether * scale * translate;
+    drawCube(cubeVAO, lightingShader, model, 0.545, 0.271, 0.075);
+
+    //Front wall
+     model = glm::mat4(1.0f);
+     translate = glm::mat4(1.0f);
+     translate2 = glm::mat4(1.0f);
+     scale = glm::mat4(1.0f);
+     scale = glm::scale(model, glm::vec3(15.5f, 5.0f, 0.50f));
+     translate = glm::translate(model, glm::vec3(-0.33, 0, -20.5));
+     model = alTogether * scale * translate;
+     drawCube(cubeVAO, lightingShader, model, 0.545, 0.271, 0.075);
+
+     //floor
+     model = glm::mat4(1.0f);
+     translate = glm::mat4(1.0f);
+     translate2 = glm::mat4(1.0f);
+     scale = glm::mat4(1.0f);
+     scale = glm::scale(model, glm::vec3(15.5f, .05f, 20.50f));
+     translate = glm::translate(model, glm::vec3(-0.33, 0, -0.5));
+     model = alTogether * scale * translate;
+     drawCube(cubeVAO, lightingShader, model, 0.545, 0.271, 0.075);
+
+     //right wall
+
+     model = glm::mat4(1.0f);
+     translate = glm::mat4(1.0f);
+     translate2 = glm::mat4(1.0f);
+     scale = glm::mat4(1.0f);
+     scale = glm::scale(model, glm::vec3(0.5f, 5.0f, 20.0f));
+     translate = glm::translate(model, glm::vec3(20.5f, 0, -0.5));
+     model = alTogether * scale * translate;
+     drawCube(cubeVAO, lightingShader, model, 0.545, 0.271, 0.075);
+}
+/*  
 void bed(unsigned int& cubeVAO, Shader& lightingShader, glm::mat4 alTogether)
 {
     float baseHeight = 0.3;
@@ -497,7 +577,7 @@ void bed(unsigned int& cubeVAO, Shader& lightingShader, glm::mat4 alTogether)
     drawCube(cubeVAO, lightingShader, model, 0.545, 0.271, 0.075);
 
 }
-
+*/
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow* window)
@@ -589,7 +669,40 @@ void processInput(GLFWwindow* window)
         eyeY -= 2.5 * deltaTime;
         basic_camera.changeEye(eyeX, eyeY, eyeZ);
     }
-    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+    pointlight3.turnOff();
+    pointlight4.turnOff();
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+    {
+        onOffToggle = !onOffToggle;
+        if(onOffToggle){  
+           pointlight1.turnOff();
+           
+        }
+        else
+            pointlight1.turnOn();
+  
+
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
+    {
+        onOffToggle1 = !onOffToggle1;
+        if (onOffToggle1) {
+            pointlight2.turnOff();
+
+        }
+        else
+            pointlight2.turnOn();
+
+
+    }
+    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
+    {
+        donOffToggle = !donOffToggle;
+        
+    }
+
+  /*   if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
     {
         pointlight1.turnOff();
         pointlight2.turnOff();
@@ -597,18 +710,45 @@ void processInput(GLFWwindow* window)
         pointlight4.turnOff();
 
     }
-    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
     {
         pointlight1.turnOn();
         pointlight2.turnOn();
-        pointlight3.turnOn();
-        pointlight4.turnOn();
+       // pointlight3.turnOn();
+       // pointlight4.turnOn();
+    }*/
+
+    if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
+    {
+        if (specularToggle)
+        {
+
+            pointlight1.turnAmbientOff();
+            pointlight2.turnAmbientOff();
+            pointlight3.turnAmbientOff();
+            pointlight4.turnAmbientOff();
+            specularToggle = !specularToggle;
+        }
+        else
+        {
+
+            pointlight1.turnAmbientOn();
+            pointlight2.turnAmbientOn();
+            pointlight3.turnAmbientOn();
+            pointlight4.turnAmbientOn();
+            specularToggle = !specularToggle;
+        }
+
+
+
     }
-    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
+
+
+    if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
     {
         if (diffuseToggle)
         {
-            
+
             pointlight1.turnDiffuseOff();
             pointlight2.turnDiffuseOff();
             pointlight3.turnDiffuseOff();
@@ -617,7 +757,7 @@ void processInput(GLFWwindow* window)
         }
         else
         {
-           
+
             pointlight1.turnDiffuseOn();
             pointlight2.turnDiffuseOn();
             pointlight3.turnDiffuseOn();
@@ -626,11 +766,11 @@ void processInput(GLFWwindow* window)
         }
 
     }
-    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
     {
         if (specularToggle)
         {
-            
+
             pointlight1.turnSpecularOff();
             pointlight2.turnSpecularOff();
             pointlight3.turnSpecularOff();
@@ -639,7 +779,7 @@ void processInput(GLFWwindow* window)
         }
         else
         {
-            
+
             pointlight1.turnSpecularOn();
             pointlight2.turnSpecularOn();
             pointlight3.turnSpecularOn();
@@ -648,9 +788,9 @@ void processInput(GLFWwindow* window)
         }
 
 
-        
+
     }
-    if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
+   /* if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
     {
         pointlight1.turnAmbientOn();
         pointlight2.turnAmbientOn();
@@ -690,10 +830,10 @@ void processInput(GLFWwindow* window)
 
 
         pointlight4.ambient = glm::vec3(0.0, 1.0, 0.0);
-        pointlight4.diffuse = glm::vec3(0.0, 1.0, 0.0);
-        pointlight4.specular = glm::vec3(0.0, 1.0, 0.0);
+       pointlight4.diffuse = glm::vec3(0.0, 1.0, 0.0);
+       pointlight4.specular = glm::vec3(0.0, 1.0, 0.0);
 
-    }
+    }*/
 
 
 }
